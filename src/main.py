@@ -1,10 +1,11 @@
-from .textnode import TextNode, text_node_to_html
+from .parser import text_to_nodes
+from .textnode import TextNode, TextType
 
 
 def main():
-    node = TextNode("Bold text", "bold")
+    text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
 
-    print(text_node_to_html(node).to_html())
+    print(text_to_nodes(text))
 
 
 if __name__ == "__main__":
