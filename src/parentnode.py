@@ -1,4 +1,5 @@
 from .htmlnode import HTMLNode
+from .textnode import TextNode, text_node_to_html
 
 
 class ParentNode(HTMLNode):
@@ -18,6 +19,9 @@ class ParentNode(HTMLNode):
         output = f"<{self.tag}{props}>"
 
         for child in self.children:
+            if isinstance(child, TextNode):
+                output += text_node_to_html(child).to_html()
+                continue
             output += child.to_html()
 
         output += f"</{self.tag}>"

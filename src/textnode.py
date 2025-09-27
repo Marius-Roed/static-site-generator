@@ -36,7 +36,7 @@ def text_node_to_html(node):
         case TextType.ITALIC_TEXTNODE:
             return LeafNode("i", node.text)
         case TextType.CODE_TEXTNODE:
-            return LeafNode("code", node.text)
+            return LeafNode("pre", node.text)
         case TextType.LINK_TEXTNODE:
             return LeafNode("a", node.text, {"href": node.url})
         case TextType.IMAGE_TEXTNODE:

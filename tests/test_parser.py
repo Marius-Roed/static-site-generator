@@ -1,6 +1,12 @@
 import unittest
 
-from src.parser import split_nodes_delimiter, extract_images, extract_links, text_to_nodes
+from src.parser import (
+    split_nodes_delimiter,
+    extract_images,
+    extract_links,
+    text_to_nodes,
+    markdown_to_blocks
+)
 from src.textnode import TextType, TextNode
 
 
@@ -105,6 +111,68 @@ class TestParser(unittest.TestCase):
                      "https://i.imgur.com/fJRm4Vk.jpeg"),
             TextNode(" and a ", "plain"),
             TextNode("link", "link", "https://boot.dev")
+        ])
+
+    def test_text_to_blocks(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        self.assertListEqual(markdown_to_blocks(md), [
+            'This is **bolded** paragraph',
+            'This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line',
+            '- This is a list\n- with items'
+        ])
+
+    def test_text_to_single_block(self):
+        md = "Just a normal paragraph with **bold** text, _italics_ and `inline code`"
+        self.assertEqual(markdown_to_blocks(md), [
+                         'Just a normal paragraph with **bold** text, _italics_ and `inline code`'])
+
+    def test_heading_checkbox(self):
+        md = """
+# My todo list
+
+![Awesome icon](https://placeholder.co/300x300)
+
+[x] generate textnodes
+[] complete parser
+[] publish site
+"""
+        self.assertListEqual(markdown_to_blocks(md), [
+            '# My todo list',
+            "![Awesome icon](https://placeholder.co/300x300)",
+            "[x] generate textnodes\n[] complete parser\n[] publish site"
+        ])
+
+    def test_with_empty_line(self):
+        md = """
+# Really cool project 1
+
+
+
+And in version number 2 we will have...
+"""
+        self.assertListEqual(markdown_to_blocks(md), [
+            "# Really cool project 1",
+            "And in version number 2 we will have..."
+        ])
+
+    def test_with_three_empty(self):
+        md = """
+Here is a paragraph
+
+
+With space in between
+            """
+        self.assertListEqual(markdown_to_blocks(md), [
+            "Here is a paragraph",
+            "With space in between"
         ])
 
 

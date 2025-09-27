@@ -1,11 +1,29 @@
-from .parser import text_to_nodes
-from .textnode import TextNode, TextType
+import os
+import shutil
+
+
+def copy_to_public(dir, root):
+    files = os.listdir(dir)
+    public = root + "/public"
+
+    for file in files:
+        path = dir + '/' + file
+        subdir = dir.replace(root + "/static", "")
+        if not os.path.isfile(path):
+            copy_to_public(path, root)
+        else:
+            if not os.path.exists(public + subdir):
+                os.mkdir(public + subdir)
+            shutil.copy(path, public + subdir + "/" + file)
 
 
 def main():
-    text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+    cur_dir = os.getcwd()
+    if os.path.exists(cur_dir + '/public'):
+        shutil.rmtree(cur_dir + '/public')
 
-    print(text_to_nodes(text))
+    os.mkdir(cur_dir + '/public')
+    copy_to_public(cur_dir + '/static', cur_dir)
 
 
 if __name__ == "__main__":
