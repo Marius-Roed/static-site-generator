@@ -2,6 +2,7 @@ import re
 from .textnode import TextNode, TextType, text_node_to_html
 from .block import get_block_type
 from .parentnode import ParentNode
+from .leafnode import LeafNode
 
 
 def split_nodes_delimiter(nodes, delimiter, new_type):
@@ -119,26 +120,25 @@ def text_to_children(text, text_type=None):
     nodes = []
     match(text_type):
         case "heading":
-            text = " ".join(text.split("\n"))
-            nodes.append(ParentNode(
-                get_heading_tag(text), text_to_nodes(text)))
+            tag = get_heading_tag(text)
+            text = " ".join(text.replace("#", "").split("\n")).strip()
+            nodes.append(ParentNode(tag, text_to_nodes(text)))
         case "quote":
             text = text[1:]
-            text = " ".join(text.split("\n"))
+            text = "<br>".join(text.split("\n>")).strip()
             nodes.append(ParentNode('blockquote', text_to_nodes(text)))
         case "ordered_list" | "unordered_list":
             items = []
             li = text.split("\n")
             for item in li:
-                item = item[2:]
-                print(item)
+                item = item[2:].strip()
                 items.append(ParentNode('li', text_to_nodes(item)))
 
             tag = 'ol' if text_type == "ordered_list" else 'ul'
             nodes.append(ParentNode(tag, items))
         case "code":
             nodes.append(ParentNode(
-                'code', [TextNode(text.replace("```", ""), 'code')]))
+                "pre", [LeafNode('code', text.replace("```", ""))]))
         case _:
             nodes.append(ParentNode('p', text_to_nodes(text)))
 

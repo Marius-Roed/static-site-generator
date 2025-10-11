@@ -32,6 +32,12 @@ class TestTextNode(unittest.TestCase):
         node = LeafNode("p", "This is my very awesome text", {})
         self.assertEqual(node.to_html(), "<p>This is my very awesome text</p>")
 
+    def test_image(self):
+        node = LeafNode(
+            "img", "", {"src": "https://placehold.co/300", "alt": "replace me"})
+        self.assertEqual(
+            node.to_html(), "<img src=\"https://placehold.co/300\" alt=\"replace me\" />")
+
 
 if __name__ == "__main__":
     unittest.main()
